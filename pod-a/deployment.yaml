@@ -1,36 +1,45 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: my-app
+  name: my-app-a
   labels:
-    app: my-app
+    app: my-app-a
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: my-app
+      app: my-app-a
   template:
     metadata:
       labels:
-        app: my-app
+        app: my-app-a
     spec:
       containers:
-      - name: my-app
-        image: test/my-app:latest
+      - name: my-app-a
+        image: ttg/testapp:latest
         imagePullPolicy: Never
+        env:
+        - name: MY_ENV_VAR
+          value: "my-app-a"
+        - name: MY_API_PREFIX
+          value: "/a"
+        - name: MY_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
 ---
 
 apiVersion: v1
 kind: Service
 metadata:
-  name: my-app
+  name: my-app-a
 spec:
   type: ClusterIP
   ports:
     - port: 5678
-      targetPort: 5000
+      targetPort: 1323
   selector:
-    app: my-app
+    app: my-app-a
 
 ---
 
@@ -42,17 +51,17 @@ spec:
   rules:
     - http:
         paths:
-          - path: /bar
+          - path: /a
             pathType: Prefix
             backend:
               service:
-                name: my-app
+                name: my-app-a
                 port:
                   number: 5678
-          - path: /foo
+          - path: /b
             pathType: Prefix
             backend:
               service:
-                name: my-app
+                name: my-app-b
                 port:
                   number: 5678
