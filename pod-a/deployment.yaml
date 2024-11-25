@@ -17,7 +17,7 @@ spec:
       containers:
       - name: my-app-a
         image: ttg/testapp:latest
-        imagePullPolicy: Never
+        imagePullPolicy: Never # This is necessary if you are using a local image
         env:
         - name: MY_ENV_VAR
           value: "my-app-a"
